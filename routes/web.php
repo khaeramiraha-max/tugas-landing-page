@@ -1,26 +1,67 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-// HOME
-Route::get('/', function () {
-    return view('home');
+// ================= MAHASISWA (COOKIE) =================
+
+// form
+Route::get('/login-mahasiswa', function () {
+    return view('login-mahasiswa');
 });
 
-// FORM PENDAFTARAN
-Route::get('/daftar', function () {
-    return view('daftar');
+// proses
+Route::post('/login-mahasiswa', function (Request $request) {
+    return redirect('/dashboard-mahasiswa')
+        ->cookie('mahasiswa', $request->nama, 60);
 });
 
-Route::post('/daftar', function () {
-    return back()->with('success', 'Pendaftaran berhasil!');
+// dashboard
+Route::get('/dashboard-mahasiswa', function (Request $request) {
+    if (!$request->cookie('mahasiswa')) {
+        return redirect('/login-mahasiswa');
+    }
+
+    return view('dashboard-mahasiswa');
 });
 
-// FORM ASPIRASI
-Route::get('/aspirasi', function () {
-    return view('aspirasi');
+// logout
+Route::get('/logout-mahasiswa', function () {
+    return redirect('/login-mahasiswa')
+        ->withCookie(cookie()->forget('mahasiswa'));
 });
 
-Route::post('/aspirasi', function () {
-    return back()->with('success', 'Aspirasi berhasil dikirim!');
+
+// ================= ADMIN (SESSION) =================
+
+// form
+Route::get('/login-admin', function () {
+    return view('login-admin');
+});
+
+// proses
+Route::post('/login-admin', function (Request $request) {
+
+    if ($request->username == 'admin' && $request->password == '123') {
+        session(['admin' => true]);
+        return redirect('/dashboard-admin');
+    }
+
+    return back()->with('error', 'Login gagal!');
+});
+
+// dashboard
+Route::get('/dashboard-admin', function () {
+
+    if (!session('admin')) {
+        return redirect('/login-admin');
+    }
+
+    return view('dashboard-admin');
+});
+
+// logout
+Route::get('/logout-admin', function () {
+    session()->forget('admin');
+    return redirect('/login-admin');
 });
