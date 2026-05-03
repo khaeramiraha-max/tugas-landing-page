@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-
+// ================= LANDING PAGE =================
 Route::get('/', function () {
     return view('landing', [
         'nama' => config('himpunan.nama'),
@@ -11,8 +12,8 @@ Route::get('/', function () {
         'visi' => config('himpunan.visi'),
         'misi' => config('himpunan.misi')
     ]);
-=======
-use Illuminate\Http\Request;
+});
+
 
 // ================= MAHASISWA (COOKIE) =================
 
@@ -75,5 +76,4 @@ Route::get('/dashboard-admin', function () {
 Route::get('/logout-admin', function () {
     session()->forget('admin');
     return redirect('/login-admin');
-
 });
